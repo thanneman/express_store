@@ -43,6 +43,10 @@ app.post('/', (req, res) => {
     res.send('POST request received.');
 });
 
+app.get('/user', (req, res) => {
+    res.json(users);
+});
+
 app.post('/user', (req, res) => {
     const { username, password, favoriteClub, newsLetter=false } = req.body;
 
@@ -113,6 +117,24 @@ app.post('/user', (req, res) => {
         .status(201)
         .location(`http://localhost:8000/user/${id}`)
         .json({id: id});
+});
+
+app.delete('/user/:userId', (req, res) => {
+    const { userId } = req.params;
+    const index = users.findIndex(u => u.id === userId);
+
+    //check if we have user with that id
+    if (index === -1) {
+        return res
+            .status(400)
+            .send('User not found');
+    }
+
+    users.splice(index, 1);
+
+    res
+        .status(204)
+        .end();
 });
 
 app.use(function errorHandler(error, req, res, next) {
